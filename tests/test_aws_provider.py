@@ -21,6 +21,26 @@ def test_get_identity_does_not_request_credentials(monkeypatch: Any) -> None:
     assert "SecretAccessKey" not in result
 
 
+def test_aws_region_environment_is_used_when_profile_has_no_region(monkeypatch: Any) -> None:
+    calls: dict[str, Any] = {}
+
+    class FakeSession:
+        region_name = None
+
+        def client(self, service: str, **kwargs: Any) -> object:
+            calls["service"] = service
+            calls.update(kwargs)
+            return object()
+
+    monkeypatch.setenv("AWS_REGION", "eu-west-1")
+    monkeypatch.setattr(aws.boto3, "Session", FakeSession)
+
+    aws.aws_client("ec2")
+
+    assert calls["service"] == "ec2"
+    assert calls["region_name"] == "eu-west-1"
+
+
 def test_iam_inventory_returns_role_metadata_without_credential_calls(monkeypatch: Any) -> None:
     class FakeIam:
         def get_paginator(self, operation: str) -> Any:

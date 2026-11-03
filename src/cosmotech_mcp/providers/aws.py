@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any
 
 import boto3
@@ -14,9 +15,15 @@ CLIENT_CONFIG = Config(
 MAX_RESOURCES = 200
 
 
+def default_region(session: Any | None = None) -> str | None:
+    return os.getenv("AWS_REGION") or (session or boto3.Session()).region_name
+
+
 def aws_client(service: str, region: str | None = None) -> Any:
     session = boto3.Session()
-    return session.client(service, region_name=region or session.region_name, config=CLIENT_CONFIG)
+    return session.client(
+        service, region_name=region or default_region(session), config=CLIENT_CONFIG
+    )
 
 
 def _limited_pages(
@@ -61,14 +68,14 @@ def eks_inventory(region: str | None = None) -> dict[str, Any]:
                 "nodeGroups": node_groups,
             }
         )
-    return {"region": region or boto3.Session().region_name, "clusters": results}
+    return {"region": region or default_region(), "clusters": results}
 
 
 def ecr_inventory(region: str | None = None) -> dict[str, Any]:
     client = aws_client("ecr", region)
     repos = _limited_pages(client, "describe_repositories", "repositories")
     return {
-        "region": region or boto3.Session().region_name,
+        "region": region or default_region(),
         "repositories": [
             {
                 "name": repo.get("repositoryName"),
@@ -90,7 +97,7 @@ def ec2_inventory(region: str | None = None) -> dict[str, Any]:
         instance for reservation in reservations for instance in reservation.get("Instances", [])
     ]
     return {
-        "region": region or boto3.Session().region_name,
+        "region": region or default_region(),
         "instances": [
             {
                 "id": instance.get("InstanceId"),
@@ -127,7 +134,7 @@ def sqs_inventory(region: str | None = None) -> dict[str, Any]:
             ],
         ).get("Attributes", {})
         queues.append({"url": url, **attrs})
-    return {"region": region or boto3.Session().region_name, "queues": queues}
+    return {"region": region or default_region(), "queues": queues}
 
 
 def dynamodb_inventory(region: str | None = None) -> dict[str, Any]:
@@ -153,7 +160,7 @@ def dynamodb_inventory(region: str | None = None) -> dict[str, Any]:
                 "streamEnabled": table.get("StreamSpecification", {}).get("StreamEnabled", False),
             }
         )
-    return {"region": region or boto3.Session().region_name, "tables": tables}
+    return {"region": region or default_region(), "tables": tables}
 
 
 def iam_inventory() -> dict[str, Any]:
@@ -196,4 +203,4 @@ def inventory(region: str | None = None) -> dict[str, Any]:
             sections[name] = function(region)
         except Exception as exc:
             sections[name] = {"error": type(exc).__name__}
-    return {"region": region or boto3.Session().region_name, "services": sections}
+    return {"region": region or default_region(), "services": sections}

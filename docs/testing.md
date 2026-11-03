@@ -6,10 +6,12 @@ Run date: 2026-11-03. Commands below were run from this project directory. Depen
 
 | Check | Result |
 | --- | --- |
-| `pytest -q` | 13 passed |
+| `pytest -q` | 14 passed |
 | `ruff check .` | Passed |
-| `ruff format --check .` | 19 files already formatted |
+| `ruff format --check .` | 24 files already formatted |
 | `python -m compileall -q src tests` | Passed |
+| `python -m pip check` | No broken requirements found |
+| Markdown local links and JSON/TOML/shell examples | Passed |
 | `docker build -t cosmotech-infrastructure-mcp:local .` | Passed |
 | STDIO MCP handshake, tool discovery, and `linux_system_info` call | Passed; 19 tools discovered |
 | Authenticated Streamable HTTP MCP handshake, discovery, and tool call | Passed; 19 tools discovered |

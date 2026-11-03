@@ -1,31 +1,45 @@
-# MVP architecture and controls
+# Architecture and supported scope
+
+CosmoTech Infrastructure MCP is a Python 3.12+ MCP server built with FastMCP. It exposes 19 read-only tools using two transports:
+
+- **STDIO:** a local MCP client starts `python -m cosmotech_mcp serve --transport stdio`; the server reads/writes MCP protocol messages over stdin/stdout.
+- **Streamable HTTP:** the server listens on `MCP_HTTP_HOST:MCP_HTTP_PORT` and exposes `/mcp`. It requires a static bearer token. The default bind address is loopback.
 
 ```mermaid
 flowchart LR
-    Client[Codex CLI / Claude Code / MCP client]
+    Client[MCP client]
     Server[FastMCP server]
-    Policy[Read-only policy]
+    Guard[Read-only policy, path checks, limits]
     Audit[Redacted JSONL audit]
-    AWS[boto3 AWS APIs]
-    Kube[kubectl and helm]
-    TF[Terraform validate and plan]
-    Host[Linux, Docker, Git]
+    AWS[boto3 and AWS APIs]
+    Kube[kubectl and Helm CLIs]
+    Infra[Terraform, Docker, Git CLIs]
+    Host[Linux host facts]
 
     Client -->|STDIO or authenticated Streamable HTTP| Server
-    Server --> Policy
+    Server --> Guard
     Server --> Audit
-    Policy --> AWS
-    Policy --> Kube
-    Policy --> TF
-    Policy --> Host
+    Guard --> AWS
+    Guard --> Kube
+    Guard --> Infra
+    Guard --> Host
 ```
 
-## Boundaries
+## Integrations
 
-- The provider-independent tool server depends on provider adapters, configuration, a read-only policy, command execution, redaction, and audit.
-- AWS provider operations are direct boto3 reads. Kubernetes support is CLI-context based, so the same tools work with any cluster supported by the user's `kubectl` context and installed plugins.
-- Azure and GCP SDK adapters, OpenShift API-specific checks, and Linux agents are not implemented in this MVP.
-- STDIO inherits the local user's process permissions. HTTP requires a configured static bearer token and uses loopback by default. Remote production use should replace the static token with enterprise OAuth/OIDC and TLS termination.
-- Commands have no shell, an allowlist, bounded runtime, bounded captured output, and configured working-directory roots.
-- Audit events contain arguments after redaction, tool name, timestamp, outcome, and exception type. Tool results are not written to the audit file.
-- The Terraform plan tool disables refresh and locking, does not persist the plan, and does not initialize. It may still evaluate supported providers; use a local backend/state and a test workspace when reviewing plans.
+- AWS is accessed directly through boto3's standard credential provider chain. Identity uses STS; inventory supports EKS, ECR, EC2, SQS, DynamoDB, and IAM. AWS inventory sections are limited to 200 resources.
+- Kubernetes operations invoke the local `kubectl` executable and its active context. Health, namespace-wide resources, and observability checks can require cluster-wide read permissions. `helm_inventory` reads Helm releases through the local Helm CLI.
+- Terraform commands are external CLI calls. The server does not initialize configurations, persist plans, refresh state, apply, or destroy.
+- Docker inspection and Git status use the local CLI. Linux host facts are read directly from the running Python process environment.
+
+## Limits and future scope
+
+- Native Azure and GCP SDK integrations, OpenShift-specific APIs, provider-native policy evaluation, and write/automation operations are not implemented.
+- Kubernetes can work with EKS, AKS, GKE, or OpenShift when a compatible Kubernetes context exists; those are not native provider adapters. Only the EKS context noted in the validation record has been exercised.
+- `observability_health` checks pod phase and container readiness for names/namespaces matching Prometheus, Grafana, Loki, Tempo, and OpenTelemetry Collector. It does not call their product APIs or query metrics/logs/traces.
+- The Docker image includes the Python server only, not the provider CLIs. Container users must configure the tools and credentials they need separately.
+- Hosted-client OAuth, per-user authorization, and multi-tenant isolation are not implemented. Static HTTP bearer authentication is suitable only for controlled environments.
+
+## Execution controls
+
+The server uses a read-only command allowlist, argument arrays with `shell=False`, explicit working-directory roots, bounded command runtime and output, redaction, and audit logging. Tool errors return a structured error; an unavailable audit log prevents tool execution. See [security](security.md) for details and [examples](examples.md) for each tool's parameters.
