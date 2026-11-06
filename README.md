@@ -1,52 +1,50 @@
 # CosmoTech Infrastructure MCP
 
-CosmoTech Infrastructure MCP is a Python Model Context Protocol (MCP) server for read-only inspection of AWS, Kubernetes, Terraform, Git, Linux host, Docker, and Kubernetes observability state. It exposes 19 tools over local STDIO or authenticated Streamable HTTP.
+Servidor Python baseado no **Model Context Protocol (MCP)** para consultar, em modo somente leitura, informações de AWS, Kubernetes, Terraform, Git, Linux, Docker e observabilidade Kubernetes. Disponibiliza 19 ferramentas por STDIO local ou HTTP com autenticação.
 
-This is an early MVP. AWS and local CLI integrations are implemented; the Kubernetes features use the active local `kubectl` context. Azure and GCP native integrations, OpenShift-specific APIs, OAuth for hosted clients, and write or automation operations are not implemented.
+**Estado:** MVP inicial. Integrações AWS e CLI locais implementadas; Kubernetes utiliza o contexto `kubectl` ativo. Ainda não há integrações nativas Azure/GCP, APIs específicas OpenShift, OAuth para clientes hospedados ou operações de escrita/automação.
 
-## Features
+## Funcionalidades
 
-- Read AWS caller identity and summaries for EKS, ECR, EC2, SQS, DynamoDB, and IAM.
-- Inspect Kubernetes health, allowlisted resources, recent pod logs, resource descriptions, and Helm releases.
-- Run Terraform validate and a no-refresh plan; no initialize, apply, destroy, or saved plan.
-- Read Linux host facts, safe Docker metadata, Git status, and readiness of common observability pods.
-- Apply an allowlist to subprocess commands, restrict filesystem working directories, redact likely secrets, and write JSONL audit events.
+- Consultar identidade AWS e resumos de EKS, ECR, EC2, SQS, DynamoDB e IAM.
+- Inspecionar saúde Kubernetes, recursos permitidos, logs recentes, descrições e releases Helm.
+- Executar `terraform validate` e `plan` sem atualização de estado; não executa `init`, `apply`, `destroy` ou planos salvos.
+- Consultar informações do Linux, metadados Docker, estado Git e disponibilidade de componentes de observabilidade.
+- Restringir comandos e diretórios, ocultar possíveis segredos e registrar auditoria JSONL.
 
-## Quick install
+## Instalação rápida
 
-Requirements: Python 3.12 or newer and Git. The AWS CLI and provider CLIs are optional; install only the tools for the integrations you plan to use. See [installation](docs/installation.md) and [configuration](docs/configuration.md).
+**Pré-requisitos:** Python 3.12 ou superior e Git. AWS CLI e CLIs dos provedores são opcionais conforme as integrações utilizadas. Leia os guias de [instalação](docs/installation.md) e [configuração](docs/configuration.md).
 
 ```bash
 git clone https://github.com/rlcosmo/cosmotech-infrastructure-mcp.git
 cd cosmotech-infrastructure-mcp
-
 python3 -m venv .venv
 source .venv/bin/activate
-
 pip install --upgrade pip
 pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-Start locally over STDIO:
+Configure o arquivo `.env` localmente, sem versionar credenciais. Para iniciar via STDIO:
 
 ```bash
 .venv/bin/python -m cosmotech_mcp serve --transport stdio
 ```
 
-Configure a client using the [client guide](docs/clients.md), then explore the [tool examples](docs/examples.md). For authenticated local HTTP, see [HTTP setup](docs/clients.md#openai-codex-cli-local-streamable-http).
+Em seguida, configure seu cliente seguindo o [guia de clientes](docs/clients.md) e consulte os [exemplos](docs/examples.md). Para HTTP autenticado local, veja a [configuração HTTP](docs/clients.md#openai-codex-cli-local-streamable-http).
 
-## Documentation
+## Documentação
 
-- [Installation and prerequisites](docs/installation.md)
-- [Configuration and provider credentials](docs/configuration.md)
-- [Client setup: Codex, ChatGPT, Claude Code, Cursor](docs/clients.md)
-- [Tool examples](docs/examples.md)
-- [Security model](docs/security.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Architecture and boundaries](docs/architecture.md)
-- [Validation record](docs/testing.md)
+- [Instalação e pré-requisitos](docs/installation.md)
+- [Configuração e credenciais](docs/configuration.md)
+- [Clientes: Codex, ChatGPT, Claude Code e Cursor](docs/clients.md)
+- [Exemplos de ferramentas](docs/examples.md)
+- [Modelo de segurança](docs/security.md)
+- [Solução de problemas](docs/troubleshooting.md)
+- [Arquitetura e limitações](docs/architecture.md)
+- [Registro de validações](docs/testing.md)
 
-## License
+## Licença
 
-MIT. See [LICENSE](LICENSE).
+MIT. Consulte [LICENSE](LICENSE).
