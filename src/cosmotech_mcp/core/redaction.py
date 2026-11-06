@@ -10,6 +10,18 @@ SENSITIVE_KEY = re.compile(
     re.IGNORECASE,
 )
 STRING_PATTERNS = (
+    (
+        re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"),
+        "[REDACTED_GITHUB_TOKEN]",
+    ),
+    (
+        re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"),
+        "[REDACTED_JWT]",
+    ),
+    (
+        re.compile(r"(?i)(https?|postgres(?:ql)?|mysql|mongodb(?:\+srv)?)://[^\s/@:]+:[^\s/@]+@"),
+        r"\1://[REDACTED]@",
+    ),
     (re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"), "[REDACTED_AWS_ACCESS_KEY]"),
     (
         re.compile(r"(?i)(authorization\s*[:=]\s*bearer\s+)[^\s,;]+"),
@@ -29,8 +41,8 @@ STRING_PATTERNS = (
     ),
     (
         re.compile(
-            r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----.*?-----END "
-            r"(?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
+            r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----.*?-----END "
+            r"(?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----",
             re.DOTALL,
         ),
         "[REDACTED_PRIVATE_KEY]",

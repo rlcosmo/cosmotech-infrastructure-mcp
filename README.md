@@ -1,8 +1,12 @@
 # CosmoTech Infrastructure MCP
 
-Servidor Python baseado no **Model Context Protocol (MCP)** para consultar, em modo somente leitura, informações de AWS, Kubernetes, Terraform, Git, Linux, Docker e observabilidade Kubernetes. Disponibiliza 19 ferramentas por STDIO local ou HTTP com autenticação.
+Servidor Python baseado no **Model Context Protocol (MCP)** para consultar, em modo somente leitura, informações de AWS, Kubernetes, Terraform, Git, Linux, Docker e observabilidade Kubernetes. Disponibiliza 25 ferramentas, recursos de contexto e prompt de especialistas por STDIO local ou HTTP com autenticação.
 
-**Estado:** MVP inicial. Integrações AWS e CLI locais implementadas; Kubernetes utiliza o contexto `kubectl` ativo. Ainda não há integrações nativas Azure/GCP, APIs específicas OpenShift, OAuth para clientes hospedados ou operações de escrita/automação.
+**Estado:** MVP inicial. Integrações AWS e CLI locais implementadas; Kubernetes utiliza o contexto `kubectl` ativo. Ainda não há integrações nativas Azure/GCP, APIs específicas OpenShift, OAuth para clientes hospedados ou operações de escrita na infraestrutura. Missões de diagnóstico com limites estão implementadas.
+
+## Agente da empresa
+
+O modelo do cliente MCP atua como cérebro do agente técnico da CosmoTech. A versão 0.2 inclui o cenário consolidado em 06/11/2026, 11 perfis de especialistas, roteamento por objetivo e missões de diagnóstico com tempo/etapas limitados e memória local sanitizada. Consulte o [guia do agente](docs/company-agent.md) para usar as ferramentas, atualizar fontes e conhecer os limites de autonomia.
 
 ## Funcionalidades
 
@@ -35,6 +39,8 @@ Configure o arquivo `.env` localmente, sem versionar credenciais. Para iniciar v
 Em seguida, configure seu cliente seguindo o [guia de clientes](docs/clients.md) e consulte os [exemplos](docs/examples.md). Para HTTP autenticado local, veja a [configuração HTTP](docs/clients.md#openai-codex-cli-local-streamable-http).
 
 ## Documentação
+
+- [Agente CosmoTech, especialistas e missões](docs/company-agent.md)
 
 - [Instalação e pré-requisitos](docs/installation.md)
 - [Configuração e credenciais](docs/configuration.md)

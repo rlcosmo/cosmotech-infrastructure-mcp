@@ -89,7 +89,7 @@ async def test_stdio_process_performs_mcp_handshake_and_tool_call(tmp_path: Path
     async with Client(transport, timeout=20) as client:
         tools = await client.list_tools()
         result = await client.call_tool("linux_system_info", {})
-    assert len(tools) == 19
+    assert len(tools) == 25
     assert not result.is_error
     assert (tmp_path / "stdio-audit.jsonl").is_file()
 

@@ -22,6 +22,8 @@ dist/
 *.pfx
 *.token
 audit*.jsonl
+*.sqlite3
+*.sqlite3-*
 .terraform/
 *.tfstate
 *.tfstate.*

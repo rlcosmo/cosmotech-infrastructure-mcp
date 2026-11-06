@@ -13,6 +13,8 @@ from typing import Any
 from fastmcp import FastMCP
 from fastmcp.server.auth.providers.jwt import StaticTokenVerifier
 
+from cosmotech_mcp.company.catalog import INSTRUCTIONS
+from cosmotech_mcp.company.tools import register_company_tools
 from cosmotech_mcp.core.audit import JsonAuditLog
 from cosmotech_mcp.core.commands import CommandResult, run_read_only_command
 from cosmotech_mcp.core.policy import Policy
@@ -109,7 +111,9 @@ def create_server(*, settings: Settings | None = None, auth_token: str | None = 
             },
             required_scopes=["infrastructure:read"],
         )
-    mcp = FastMCP(name="CosmoTech Infrastructure MCP", auth=auth)
+    mcp = FastMCP(
+        name="CosmoTech Infrastructure MCP", instructions=INSTRUCTIONS, auth=auth, version="0.2.0"
+    )
 
     def register(tool_name: str, arguments: dict[str, Any], operation: Callable[[], Any]) -> Any:
         return _guarded(
@@ -496,4 +500,5 @@ def create_server(*, settings: Settings | None = None, auth_token: str | None = 
 
         return register("observability_health", {}, operation)
 
+    register_company_tools(mcp, active_settings, register)
     return mcp

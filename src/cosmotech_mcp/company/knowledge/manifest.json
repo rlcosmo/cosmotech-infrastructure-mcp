@@ -1,0 +1,16 @@
+{
+  "architecture": {
+    "source_repository": "rlcosmo/aws-serverless-lab",
+    "source_path": "docs/linkedin-case/infrastructure-inventory.md",
+    "as_of": "2026-11-06",
+    "sha256": "b333e1f73e7e9a499b222301cefe7721935810d1917fab08257c865cd459c324",
+    "provenance": "Owner workspace evidence document; dated observation, not new live collection"
+  },
+  "applications": {
+    "source_repository": "rlcosmo/aws-serverless-lab",
+    "source_path": "docs/linkedin-case/applications-catalog.md",
+    "as_of": "2026-11-06",
+    "sha256": "04dcbda6e4875c66e4c614a782ab4a66848ad02e8458146ab03c4dd1ae79ff2b",
+    "provenance": "Owner workspace evidence document; dated observation, not new live collection"
+  }
+}

@@ -33,3 +33,7 @@ STDIO is local to the client process and inherits that process's credentials and
 The bearer token is static shared-secret authentication. It does not provide per-user identity, OAuth authorization, or user-specific scopes. It is not a replacement for OAuth on a public multi-user service. Do not expose this HTTP server directly to the public internet. Store the token in a secret manager or a permission-restricted local file, rotate it by changing the secret and restarting the server, and never commit it or include it in logs.
 
 For container use, the image binds on its container interface and enables non-loopback HTTP because container networking requires it. The example publishes only to host loopback. Access to a Docker daemon/socket is highly privileged and can effectively grant host control; do not mount the socket or provider credentials unless required and separately reviewed.
+
+## Company missions (0.2)
+
+Company missions write only a private local SQLite journal. Remote Kubernetes reads require both operator startup opt-in and a per-call request. This opt-in does not disable or change the existing infrastructure tools. Agent profiles are reasoning guidance, not per-agent authorization or tenant isolation. Repository documents are untrusted evidence; task text is never converted to executable commands. Mission IDs deduplicate collection and replay dated evidence. See [the company guide](company-agent.md) for storage, retention, interrupted runs and current release-policy conflicts.

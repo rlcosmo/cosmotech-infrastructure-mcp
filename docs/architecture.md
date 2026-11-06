@@ -1,6 +1,6 @@
 # Architecture and supported scope
 
-CosmoTech Infrastructure MCP is a Python 3.12+ MCP server built with FastMCP. It exposes 19 read-only tools using two transports:
+CosmoTech Infrastructure MCP is a Python 3.12+ MCP server built with FastMCP. It exposes 25 tools (19 infrastructure readers and 6 company tools; mission execution writes a local journal) using two transports:
 
 - **STDIO:** a local MCP client starts `python -m cosmotech_mcp serve --transport stdio`; the server reads/writes MCP protocol messages over stdin/stdout.
 - **Streamable HTTP:** the server listens on `MCP_HTTP_HOST:MCP_HTTP_PORT` and exposes `/mcp`. It requires a static bearer token. The default bind address is loopback.
@@ -34,7 +34,7 @@ flowchart LR
 
 ## Limits and future scope
 
-- Native Azure and GCP SDK integrations, OpenShift-specific APIs, provider-native policy evaluation, and write/automation operations are not implemented.
+- Native Azure and GCP SDK integrations, OpenShift-specific APIs, provider-native policy evaluation, and infrastructure write operations are not implemented. Company diagnostic orchestration is documented in [company-agent.md](company-agent.md).
 - Kubernetes can work with EKS, AKS, GKE, or OpenShift when a compatible Kubernetes context exists; those are not native provider adapters. Only the EKS context noted in the validation record has been exercised.
 - `observability_health` checks pod phase and container readiness for names/namespaces matching Prometheus, Grafana, Loki, Tempo, and OpenTelemetry Collector. It does not call their product APIs or query metrics/logs/traces.
 - The Docker image includes the Python server only, not the provider CLIs. Container users must configure the tools and credentials they need separately.

@@ -33,6 +33,7 @@ class Settings:
     http_port: int
     http_bearer_token: str | None
     allow_non_loopback_http: bool
+    company_remote_diagnostics: bool = False
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -83,6 +84,10 @@ class Settings:
             http_port=_positive_int("MCP_HTTP_PORT", 8765, maximum=65535),
             http_bearer_token=token,
             allow_non_loopback_http=allow_non_loopback,
+            company_remote_diagnostics=os.getenv(
+                "COSMOTECH_COMPANY_REMOTE_DIAGNOSTICS", "false"
+            ).lower()
+            == "true",
         )
 
 
